@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const {auth,authlogin}=require('./middleware/auth')
 const app = express()
 const port = 3000
+const cors=require('cors')
+
 
 
 app.use(cors())
