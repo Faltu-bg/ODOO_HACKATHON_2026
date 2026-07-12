@@ -56,7 +56,7 @@ const Sidebar = () => {
             Analytics
           </li>
           <li className="hover:text-cyan-400 cursor-pointer">
-            Settings
+            <Link to='/settings'>Settings</Link>
           </li>
         </ul>
       </div>

@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar"
 import Sidebar from "./components/Sidebar"
 import DriverManagement from "./pages/DriverManagement"
 import Maintenance from "./pages/Maintainance"
+import Settings from "./pages/Settings"
 
 const App=()=>{
   return <div>
@@ -10,6 +11,7 @@ const App=()=>{
     <Routes>
       <Route path='/drivers' element={<DriverManagement/>} />
       <Route path='/maintainance' element={<Maintenance />} />
+      <Route path='/settings' element={<Settings />} />
     </Routes>
   </div>
 }
