@@ -7,15 +7,17 @@ const Vehicle = require('./models/Vehicle')
 const Trip = require('./models/Trip')
 const Maintenance = require('./models/Maintenance')
 
+const jwt = require("jsonwebtoken");
+const {auth,authlogin}=require('./middleware/auth')
 const app = express()
 const port = 3000
 
-// Middleware
+
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// MongoDB Connection
+
 const mongo_username = "userg3709_db_user"
 const mongo_password = "NYC4wzzRf3CE7lp6"
 mongoose.connect(
@@ -25,48 +27,15 @@ mongoose.connect(
         console.log(`MongoDB connection error: ${err}`)
     })
 
-// Health check
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Server is running" })
 })
 
-// Login endpoint
-app.post("/api/login", async (req, res) => {
-    try {
-        const { email, password, role } = req.body
-        const user = await User.findOne({ email }).select('+password')
-        
-        if (!user) {
-            return res.status(401).json({
-                message: "Invalid credentials"
-            });
-        }
 
-        const isMatch = await user.comparePassword(password)
-        if (!isMatch) {
-            return res.status(401).json({
-                message: "Invalid credentials"
-            });
-        }
+app.post("/api/login", auth,authlogin)
 
-        if (role && user.role !== role) {
-            return res.status(403).json({
-                message: "Access denied for this role"
-            });
-        }
 
-        return res.json({
-            user: user.toPublic()
-        })
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
-})
-
-// Get all drivers
-app.get("/api/drivers", async (req, res) => {
+app.get("/api/drivers",auth, async (req, res) => {
     try {
         const drivers = await Driver.find()
         res.json(drivers)
@@ -75,8 +44,8 @@ app.get("/api/drivers", async (req, res) => {
     }
 })
 
-// Get all vehicles
-app.get("/api/vehicles", async (req, res) => {
+
+app.get("/api/vehicles",auth, async (req, res) => {
     try {
         const vehicles = await Vehicle.find()
         res.json(vehicles)
@@ -85,8 +54,8 @@ app.get("/api/vehicles", async (req, res) => {
     }
 })
 
-// Get all trips
-app.get("/api/trips", async (req, res) => {
+
+app.get("/api/trips",auth, async (req, res) => {
     try {
         const trips = await Trip.find().populate('vehicle driver')
         res.json(trips)
@@ -95,8 +64,7 @@ app.get("/api/trips", async (req, res) => {
     }
 })
 
-// Get all maintenance records
-app.get("/api/maintenance", async (req, res) => {
+app.get("/api/maintenance",auth, async (req, res) => {
     try {
         const maintenance = await Maintenance.find().populate('vehicle')
         res.json(maintenance)
@@ -105,8 +73,8 @@ app.get("/api/maintenance", async (req, res) => {
     }
 })
 
-// Get all users
-app.get("/api/users", async (req, res) => {
+
+app.get("/api/users",auth, async (req, res) => {
     try {
         const users = await User.find()
         res.json(users)
