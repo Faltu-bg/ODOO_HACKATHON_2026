@@ -29,7 +29,7 @@ export default function Login() {
     }
 
     // ✅ Redirect after login
-    navigate("/maintainance");
+    navigate("/dashboard");
   };
 
 

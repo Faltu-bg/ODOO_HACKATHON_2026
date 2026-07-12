@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import DriverManagement from "./pages/DriverManagement";
 import Maintenance from "./pages/Maintainance";
 import Login from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
 
 const LayoutWithNavbar = () => (
   <div>
@@ -16,6 +17,7 @@ const App = () => (
     <Route path="/" element={<Login />} />
     <Route element={<LayoutWithNavbar />}>
       <Route path="/drivers" element={<DriverManagement />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/maintainance" element={<Maintenance />} />
     </Route>
   </Routes>

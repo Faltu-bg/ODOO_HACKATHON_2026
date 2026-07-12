@@ -25,37 +25,37 @@ const Sidebar = () => {
           ✕
         </button>
 
-        <h2 className="text-2xl font-bold mt-10 mb-8">
+        <h2 className="text-2xl font-bold mt-10 mb-8" onClick={() => setOpen(false)}>
           TransitOps
         </h2>
 
         <ul className="space-y-5">
-          <li className="hover:text-cyan-400 cursor-pointer">
-            Dashboard
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
+             <Link to='/dashboard'>Dashboard</Link>
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
             Fleet
           </li>
 
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             <Link to='/drivers'>Drivers</Link>
           </li>
 
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             Trips
           </li>
 
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             <Link to='/maintainance'>Maintainance</Link>
           </li>
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             Fuel & Expenses
           </li>
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             Analytics
           </li>
-          <li className="hover:text-cyan-400 cursor-pointer">
+          <li className="hover:text-cyan-400 cursor-pointer" onClick={() => setOpen(false)}>
             Settings
           </li>
         </ul>
