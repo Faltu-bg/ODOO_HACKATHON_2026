@@ -1,7 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export default function Login({ onLogin }) {
   const [formData, setFormData] = useState({
@@ -15,6 +14,31 @@ export default function Login({ onLogin }) {
 
   const navigate = useNavigate();
 
+  // Static users for local testing only
+  const staticUsers = [
+    {
+      email: "fleet@transitops.test",
+      password: "fleet123",
+      role: "fleet_manager",
+      name: "Fleet Manager (Static)",
+      token: "static-token-fleet",
+    },
+    {
+      email: "dispatch@transitops.test",
+      password: "dispatch123",
+      role: "dispatcher",
+      name: "Dispatcher (Static)",
+      token: "static-token-dispatch",
+    },
+    {
+      email: "safety@transitops.test",
+      password: "safety123",
+      role: "safety_officer",
+      name: "Safety Officer (Static)",
+      token: "static-token-safety",
+    },
+  ];
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -23,37 +47,44 @@ export default function Login({ onLogin }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    try {
-      const response = await axios.post("http://localhost:3000/api/login", {
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
+    // Find user by email
+    const found = staticUsers.find((u) => u.email === formData.email.trim().toLowerCase());
 
-      // save JWT token and user
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user || {}));
-
-      // optional: notify parent app about login
-      if (typeof onLogin === "function") onLogin();
-
-      // navigate to dashboard (or maintenance if you prefer)
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.message || "Login failed. Check credentials.");
-    } finally {
+    // No API calls — only static auth
+    if (!found) {
+      setError("Unknown email. Please check your email address.");
       setLoading(false);
-      // clear form if not remembering
-      if (!formData.remember) {
-        setFormData({ email: "", password: "", role: "", remember: false });
-      }
+      return;
     }
+
+    // Password check
+    if (found.password !== formData.password) {
+      setError("Incorrect password. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    // Role check if provided
+    if (formData.role && found.role !== formData.role) {
+      setError("Role does not match. Select the correct role for this account.");
+      setLoading(false);
+      return;
+    }
+
+    // Success: persist token and user, notify parent, navigate
+    const user = { email: found.email, name: found.name, role: found.role };
+    localStorage.setItem("token", found.token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    if (typeof onLogin === "function") onLogin();
+
+    setLoading(false);
+    navigate("/dashboard", { replace: true });
   };
 
   return (

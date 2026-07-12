@@ -1,5 +1,5 @@
 // src/pages/DriverManagement.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import AddDriver from "../components/AddDriver";
 
 const initialDrivers = [
@@ -17,10 +17,25 @@ const statusStyle = {
 };
 
 export default function DriverManagement() {
-  const [drivers, setDrivers] = useState(initialDrivers);
+  // load from localStorage so added drivers persist across refresh
+  const [drivers, setDrivers] = useState(() => {
+    try {
+      const raw = localStorage.getItem("drivers");
+      return raw ? JSON.parse(raw) : initialDrivers;
+    } catch {
+      return initialDrivers;
+    }
+  });
+
   const [showModal, setShowModal] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("drivers", JSON.stringify(drivers));
+    } catch {}
+  }, [drivers]);
 
   const statusOptions = useMemo(() => ["All", "Available", "On Trip", "Suspended", "Off Duty"], []);
 
@@ -38,16 +53,15 @@ export default function DriverManagement() {
   }, [drivers, query, statusFilter]);
 
   const handleAddDriver = (newDriver) => {
-    const driver = {
-      name: newDriver.name || "Unnamed",
-      license: newDriver.license || "N/A",
-      category: newDriver.category || "N/A",
-      expiry: newDriver.expiry || "N/A",
-      contact: newDriver.contact || "N/A",
-      score: newDriver.score || "0%",
-      status: newDriver.status || "Available",
-    };
-    setDrivers((prev) => [driver, ...prev]);
+    // prevent duplicate license entries
+    setDrivers((prev) => {
+      const exists = prev.some((p) => p.license === newDriver.license);
+      if (exists) {
+        // replace existing driver with same license
+        return prev.map((p) => (p.license === newDriver.license ? newDriver : p));
+      }
+      return [newDriver, ...prev];
+    });
     setShowModal(false);
   };
 
@@ -122,20 +136,20 @@ export default function DriverManagement() {
         <table className="w-full text-sm">
           <thead className="text-gray-300 bg-[#071022] border-b border-gray-800">
             <tr>
-              <th className="text-left p-4">DRIVER</th>
-              <th className="text-left">LICENSE NO</th>
-              <th>CATEGORY</th>
-              <th>EXPIRY</th>
-              <th>CONTACT</th>
-              <th>SAFETY SCORE</th>
-              <th>STATUS</th>
-              <th>ACTION</th>
+              <th className="text-left p-4" scope="col">DRIVER</th>
+              <th scope="col">LICENSE NO</th>
+              <th scope="col">CATEGORY</th>
+              <th scope="col">EXPIRY</th>
+              <th scope="col">CONTACT</th>
+              <th scope="col">SAFETY SCORE</th>
+              <th scope="col">STATUS</th>
+              <th scope="col">ACTION</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredDrivers.map((driver, index) => (
-              <tr key={index} className="border-b border-gray-800 hover:bg-[#0f1724]">
+            {filteredDrivers.map((driver) => (
+              <tr key={driver.license} className="border-b border-gray-800 hover:bg-[#0f1724]">
                 <td className="p-4">
                   <div className="text-gray-100 font-medium">{driver.name}</div>
                   <div className="text-xs text-gray-400">{driver.category}</div>
@@ -160,7 +174,9 @@ export default function DriverManagement() {
                 </td>
 
                 <td>
-                  <button className="text-cyan-400 hover:underline">View</button>
+                  <button className="text-cyan-400 hover:underline" aria-label={`View ${driver.name}`}>
+                    View
+                  </button>
                 </td>
               </tr>
             ))}

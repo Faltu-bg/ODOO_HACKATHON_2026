@@ -36,7 +36,7 @@ const ProtectedRoute = ({ isAuthenticated, children }) => {
 export default function App() {
   // Temporarily start authenticated so you can verify protected pages render.
   // Revert to your real auth initializer when done testing.
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("isAuthenticated", isAuthenticated ? "true" : "false");

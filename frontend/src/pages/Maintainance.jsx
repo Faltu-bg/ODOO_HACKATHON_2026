@@ -1,12 +1,21 @@
 // src/pages/Maintenance.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Maintenance() {
-  const [records, setRecords] = useState([
-    { vehicle: "VAN-05", service: "Oil Change", cost: 2500, date: "2026-06-12", status: "In Shop" },
-    { vehicle: "TRUCK-11", service: "Engine Repair", cost: 18000, date: "2026-05-02", status: "Completed" },
-    { vehicle: "MINI-03", service: "Tyre Replace", cost: 6200, date: "2026-06-20", status: "In Shop" },
-  ]);
+  const initial = [
+    { id: Date.now() - 300000, vehicle: "VAN-05", service: "Oil Change", cost: 2500, date: "2026-06-12", status: "In Shop" },
+    { id: Date.now() - 200000, vehicle: "TRUCK-11", service: "Engine Repair", cost: 18000, date: "2026-05-02", status: "Completed" },
+    { id: Date.now() - 100000, vehicle: "MINI-03", service: "Tyre Replace", cost: 6200, date: "2026-06-20", status: "In Shop" },
+  ];
+
+  const [records, setRecords] = useState(() => {
+    try {
+      const raw = localStorage.getItem("maintenance_records");
+      return raw ? JSON.parse(raw) : initial;
+    } catch {
+      return initial;
+    }
+  });
 
   const [form, setForm] = useState({
     vehicle: "",
@@ -18,6 +27,7 @@ export default function Maintenance() {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const statusColor = {
     "In Shop": "bg-yellow-500 text-black",
@@ -25,6 +35,12 @@ export default function Maintenance() {
     Active: "bg-sky-500 text-black",
     Cancelled: "bg-rose-500 text-black",
   };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("maintenance_records", JSON.stringify(records));
+    } catch {}
+  }, [records]);
 
   const resetForm = () =>
     setForm({ vehicle: "", service: "", cost: "", date: "", status: "In Shop" });
@@ -37,6 +53,7 @@ export default function Maintenance() {
   const handleSave = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     // basic validation
     if (!form.vehicle.trim() || !form.service.trim() || !form.cost || !form.date) {
@@ -45,6 +62,7 @@ export default function Maintenance() {
     }
 
     const newRecord = {
+      id: Date.now(),
       vehicle: form.vehicle.trim(),
       service: form.service.trim(),
       cost: Number(form.cost),
@@ -55,19 +73,23 @@ export default function Maintenance() {
     try {
       setSaving(true);
 
-      // If you later wire an API, replace this block with a POST to your endpoint.
-      // Example:
-      // await fetch(`${baseUrl}/maintenance`, { method: "POST", body: JSON.stringify(newRecord), headers: { 'Content-Type': 'application/json' } });
-
       // optimistic UI update
       setRecords((prev) => [newRecord, ...prev]);
       resetForm();
+      setSuccess("Record saved.");
+      // clear success after short delay
+      setTimeout(() => setSuccess(""), 2500);
     } catch (err) {
       console.error(err);
       setError("Failed to save record. Try again.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDelete = (id) => {
+    if (!confirm("Delete this maintenance record?")) return;
+    setRecords((prev) => prev.filter((r) => r.id !== id));
   };
 
   return (
@@ -79,6 +101,7 @@ export default function Maintenance() {
 
           <form onSubmit={handleSave} className="space-y-4 bg-[#071022] p-6 rounded-lg border border-gray-800">
             {error && <div className="text-sm text-rose-400">{error}</div>}
+            {success && <div className="text-sm text-emerald-400">{success}</div>}
 
             <input
               name="vehicle"
@@ -106,19 +129,19 @@ export default function Maintenance() {
               className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
             />
 
-            <input
+              <input
               name="date"
               value={form.date}
               onChange={handleChange}
               type="date"
-              className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
+              className="w-full bg-transparent border border-gray-200 rounded-md px-4 py-2 text-gray-100"
             />
 
             <select
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full bg-[#071022] border border-gray-700 rounded-md px-4 py-2 text-gray-100"
+              className="w-full bg-[#071022] border hover:bg-white border-gray-700 rounded-md px-4 py-2 text-gray-100"
             >
               <option value="In Shop">In Shop</option>
               <option value="Completed">Completed</option>
@@ -166,12 +189,13 @@ export default function Maintenance() {
                   <th className="py-3">COST</th>
                   <th className="py-3">DATE</th>
                   <th className="py-3">STATUS</th>
+                  <th className="py-3">ACTION</th>
                 </tr>
               </thead>
 
               <tbody>
-                {records.map((item, idx) => (
-                  <tr key={idx} className="border-b border-gray-800 hover:bg-[#0f1724]">
+                {records.map((item) => (
+                  <tr key={item.id} className="border-b border-gray-800 hover:bg-[#0f1724]">
                     <td className="py-3 px-4 text-gray-100 font-medium">{item.vehicle}</td>
                     <td className="py-3 text-gray-200">{item.service}</td>
                     <td className="py-3 text-gray-200">₹{Number(item.cost).toLocaleString()}</td>
@@ -183,12 +207,21 @@ export default function Maintenance() {
                         {item.status}
                       </span>
                     </td>
+                    <td className="py-3">
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-rose-400 hover:underline text-sm"
+                        aria-label={`Delete record for ${item.vehicle} on ${item.date}`}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
 
                 {records.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-6 text-center text-gray-400">No records</td>
+                    <td colSpan={6} className="py-6 text-center text-gray-400">No records</td>
                   </tr>
                 )}
               </tbody>
