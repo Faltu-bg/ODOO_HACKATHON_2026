@@ -108,7 +108,6 @@ const VehicleSchema = new Schema(
 );
 
 // Indexes
-VehicleSchema.index({ registrationNumber: 1 });
 VehicleSchema.index({ status: 1 });
 VehicleSchema.index({ type: 1 });
 VehicleSchema.index({ assignedDriver: 1 });

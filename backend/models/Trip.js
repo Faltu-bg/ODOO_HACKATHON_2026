@@ -109,7 +109,6 @@ const TripSchema = new Schema(
 );
 
 // Indexes
-TripSchema.index({ tripId: 1 });
 TripSchema.index({ vehicle: 1 });
 TripSchema.index({ driver: 1 });
 TripSchema.index({ status: 1 });

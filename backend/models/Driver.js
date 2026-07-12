@@ -111,8 +111,6 @@ const DriverSchema = new Schema(
 );
 
 // Indexes
-DriverSchema.index({ email: 1 });
-DriverSchema.index({ licenseNumber: 1 });
 DriverSchema.index({ status: 1 });
 DriverSchema.index({ assignedVehicle: 1 });
 DriverSchema.index({ currentTrip: 1 });
