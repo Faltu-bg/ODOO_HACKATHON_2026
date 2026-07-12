@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const {auth,authlogin}=require('./middleware/auth')
 const app = express()
 const port = 3000
-const cors=require('cors')
+
 
 
 
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 const mongo_username = "userg3709_db_user"
 const mongo_password = "NYC4wzzRf3CE7lp6"
 mongoose.connect(
-    `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.z97tamy.mongodb.net/?appName=Cluster0`)
+    `mongodb+srv://userg3709_db_user:NYC4wzzRf3CE7lp6@cluster0.z97tamy.mongodb.net/transitops?retryWrites=true&w=majority`)
     .then(() => { console.log("Connected to MongoDB Atlas") })
     .catch((err) => {
         console.log(`MongoDB connection error: ${err}`)
@@ -35,7 +35,10 @@ app.get("/api/health", (req, res) => {
 
 
 app.post("/api/login",authlogin)
-
+app.get("/api/check-users", async (req, res) => {
+    const users = await User.find();
+    res.json(users);
+});
 
 app.get("/api/drivers",auth, async (req, res) => {
     try {
@@ -57,7 +60,7 @@ app.get("/api/vehicles",auth, async (req, res) => {
 })
 
 
-app.get("/api/trips",auth, async (req, res) => {
+app.get("/api/trips", async (req, res) => {
     try {
         const trips = await Trip.find().populate('vehicle driver')
         res.json(trips)
