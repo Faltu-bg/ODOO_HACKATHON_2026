@@ -7,7 +7,7 @@ const Sidebar = () => {
   return (
     <>
       <button
-        className="m-5 text-3xl text-white"
+        className="m-5 text-3xl text-white cursor-pointer"
         onClick={() => setOpen(true)}
       >
         ☰
@@ -47,7 +47,7 @@ const Sidebar = () => {
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
-            Maintainance
+            <Link to='/maintainance'>Maintainance</Link>
           </li>
           <li className="hover:text-cyan-400 cursor-pointer">
             Fuel & Expenses

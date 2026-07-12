@@ -1,6 +1,8 @@
 import { useState } from "react";
+import AddDriver from "../components/AddDriver";
 
 const DriverManagement = () => {
+    const [showModal,setShowModal] = useState(false);
 
   const drivers = [
     {
@@ -62,6 +64,7 @@ const DriverManagement = () => {
 
 
         <button
+          onClick={()=>setShowModal(true)}
           className="
           bg-yellow-600 
           px-5 py-2 
@@ -282,7 +285,7 @@ const DriverManagement = () => {
         cannot be assigned to trips.
 
       </div>
-
+          <AddDriver open={showModal} setOpen={setShowModal}/>
 
     </div>
   );
