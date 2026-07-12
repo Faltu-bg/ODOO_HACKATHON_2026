@@ -4,19 +4,28 @@ import axios from "axios"
 
 const DataProvider = ({children}) => {
     const [user, setUser] = useState([])
-    const [driver, setDriver] = useState(second)
+    const [driver, setDriver] = useState([])
     const fetchData = async () => {
     try {
-      const [productData, categoryData] = await Promise.all([
-        axios.get("http://localhost:3000/api/users"),
-        axios.get("http://localhost:3000/api/drivers"),
+      const [UserData, DriverData] = await Promise.all([
+        axios.get("http://localhost:3000/api/users", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+
+        axios.get("http://localhost:3000/api/drivers", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
       ]);
 
-      setData(productData.data);
-      setCategory(categoryData.data);
+      setUser(UserData.data);
+      setDriver(DriverData.data);
 
-      console.log(productData.data);
-      console.log(categoryData.data);
+      console.log(UserData.data);
+      console.log(DriverData.data);
     } catch (err) {
       console.error(err);
     } finally {

@@ -32,7 +32,7 @@ app.get("/api/health", (req, res) => {
 })
 
 
-app.post("/api/login", auth,authlogin)
+app.post("/api/login",authlogin)
 
 
 app.get("/api/drivers",auth, async (req, res) => {

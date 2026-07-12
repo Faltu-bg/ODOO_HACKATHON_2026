@@ -25,11 +25,11 @@ const auth = (req, res, next) => {
     }
 };
 
-const authlogin=async (req, res) => {
+const authlogin = async (req, res) => {
     try {
         const { email, password, role } = req.body
         const user = await User.findOne({ email }).select('+password')
-        
+
         if (!user) {
             return res.status(401).json({
                 message: "Invalid credentials"
@@ -49,7 +49,7 @@ const authlogin=async (req, res) => {
             });
         }
 
-         const token = jwt.sign(
+        const token = jwt.sign(
             {
                 id: user._id,
                 email: user.email,
@@ -63,13 +63,10 @@ const authlogin=async (req, res) => {
 
         res.json({
             message: "Login successful",
-            token: token
+            token,
+            user: user.toPublic()
         });
 
-
-        return res.json({
-            user: user.toPublic()
-        })
     } catch (err) {
         res.status(500).json({
             message: err.message
@@ -77,4 +74,4 @@ const authlogin=async (req, res) => {
     }
 }
 
-module.exports = {auth,authlogin};
+module.exports = { auth, authlogin };

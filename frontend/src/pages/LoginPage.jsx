@@ -1,6 +1,11 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { DataContext } from "../context/DataContext"; // Import the context
+=======
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+>>>>>>> 26dce6b8b972e1e8689cff1adfc587e2663d03ba
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -18,12 +23,41 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // preventDefault
-    console.log("Form submitted:", formData);
-    if(!formData.remember){
-    setFormData({email:"",password:"",role:"",remember:false})}
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/login",
+      {
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      }
+    );
+
+    console.log("Login response:", response.data);
+
+    // save JWT token
+    localStorage.setItem(
+      "token",
+      response.data.token
+    );
+
+    // save user if needed
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
+
+    navigate("/maintenance");
+
+  } catch (error) {
+    console.error(
+      error.response?.data?.message || "Login failed"
+    );
+  }
+};
 
   return (
     <div className="flex h-screen">
@@ -133,12 +167,11 @@ export default function Login() {
 
           {/* Submit Button */}
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-            onSubmit={handleSubmit}
-          >
-            Login
-          </button>
+  type="submit"
+  className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+>
+  Login
+</button>
         </form>
       </div>
     </div>
