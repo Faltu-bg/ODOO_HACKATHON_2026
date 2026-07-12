@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from 'react-router-dom'
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
@@ -38,7 +39,7 @@ const Sidebar = () => {
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
-            Drivers
+            <Link to='/drivers'>Drivers</Link>
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
