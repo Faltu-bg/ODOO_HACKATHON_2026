@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -20,17 +21,41 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!formData.remember) {
-      setFormData({ email: "", password: "", role: "", remember: false });
-    }
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/login",
+      {
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      }
+    );
 
-    // ✅ Redirect after login
-    navigate("/maintainance");
-  };
+    console.log("Login response:", response.data);
+
+    // save JWT token
+    localStorage.setItem(
+      "token",
+      response.data.token
+    );
+
+    // save user if needed
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
+
+    navigate("/maintenance");
+
+  } catch (error) {
+    console.error(
+      error.response?.data?.message || "Login failed"
+    );
+  }
+};
 
 
   return (
@@ -141,12 +166,11 @@ export default function Login() {
 
           {/* Submit Button */}
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-            onSubmit={handleSubmit}
-          >
-            Login
-          </button>
+  type="submit"
+  className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+>
+  Login
+</button>
         </form>
       </div>
     </div>
