@@ -1,5 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
+import { DataContext } from "../context/DataContext"; // Import the context
 
 export default function Login() {
   const [formData, setFormData] = useState({
