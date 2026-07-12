@@ -1,18 +1,24 @@
-import { Route, Routes } from "react-router-dom"
-import Navbar from "./components/Navbar"
-import Sidebar from "./components/Sidebar"
-import DriverManagement from "./pages/DriverManagement"
-import Maintenance from "./pages/Maintainance"
-import Login from "./pages/LoginPage"
+import { Route, Routes, Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import DriverManagement from "./pages/DriverManagement";
+import Maintenance from "./pages/Maintainance";
+import Login from "./pages/LoginPage";
 
-const App=()=>{
-  return <div>
-    <Navbar/>
-    <Login/>
-    <Routes>
-      <Route path='/drivers' element={<DriverManagement/>} />
-      <Route path='/maintainance' element={<Maintenance />} />
-    </Routes>
+const LayoutWithNavbar = () => (
+  <div>
+    <Navbar />
+    <Outlet /> {/* child routes render here */}
   </div>
-}
-export default App
+);
+
+const App = () => (
+  <Routes>
+    <Route path="/" element={<Login />} />
+    <Route element={<LayoutWithNavbar />}>
+      <Route path="/drivers" element={<DriverManagement />} />
+      <Route path="/maintainance" element={<Maintenance />} />
+    </Route>
+  </Routes>
+);
+
+export default App;
