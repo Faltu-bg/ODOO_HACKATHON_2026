@@ -1,334 +1,201 @@
-import { useState } from "react";
+// src/pages/Maintenance.jsx
+import React, { useState } from "react";
 
-const Maintenance = () => {
-
-  const [records,setRecords] = useState([
-    {
-      vehicle:"VAN-05",
-      service:"Oil Change",
-      cost:"2500",
-      status:"In Shop"
-    },
-    {
-      vehicle:"TRUCK-11",
-      service:"Engine Repair",
-      cost:"18000",
-      status:"Completed"
-    },
-    {
-      vehicle:"MINI-03",
-      service:"Tyre Replace",
-      cost:"6200",
-      status:"In Shop"
-    }
+export default function Maintenance() {
+  const [records, setRecords] = useState([
+    { vehicle: "VAN-05", service: "Oil Change", cost: 2500, date: "2026-06-12", status: "In Shop" },
+    { vehicle: "TRUCK-11", service: "Engine Repair", cost: 18000, date: "2026-05-02", status: "Completed" },
+    { vehicle: "MINI-03", service: "Tyre Replace", cost: 6200, date: "2026-06-20", status: "In Shop" },
   ]);
 
+  const [form, setForm] = useState({
+    vehicle: "",
+    service: "",
+    cost: "",
+    date: "",
+    status: "In Shop",
+  });
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const statusColor = {
-    "In Shop":"bg-yellow-600",
-    "Completed":"bg-green-600"
+    "In Shop": "bg-yellow-500 text-black",
+    Completed: "bg-emerald-500 text-black",
+    Active: "bg-sky-500 text-black",
+    Cancelled: "bg-rose-500 text-black",
   };
 
+  const resetForm = () =>
+    setForm({ vehicle: "", service: "", cost: "", date: "", status: "In Shop" });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // basic validation
+    if (!form.vehicle.trim() || !form.service.trim() || !form.cost || !form.date) {
+      setError("Please fill vehicle, service, cost and date.");
+      return;
+    }
+
+    const newRecord = {
+      vehicle: form.vehicle.trim(),
+      service: form.service.trim(),
+      cost: Number(form.cost),
+      date: form.date,
+      status: form.status,
+    };
+
+    try {
+      setSaving(true);
+
+      // If you later wire an API, replace this block with a POST to your endpoint.
+      // Example:
+      // await fetch(`${baseUrl}/maintenance`, { method: "POST", body: JSON.stringify(newRecord), headers: { 'Content-Type': 'application/json' } });
+
+      // optimistic UI update
+      setRecords((prev) => [newRecord, ...prev]);
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save record. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-
-    <div className="
-    min-h-screen
-    bg-[#111]
-    text-white
-    p-8">
-
-
-      <div className="
-      grid
-      grid-cols-2
-      gap-10">
-
-
-        {/* Maintenance Form */}
-
+    <div className="min-h-screen bg-[#0b1220] text-white p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Form */}
         <div>
+          <h2 className="text-sm text-gray-300 mb-5">LOG SERVICE RECORD</h2>
 
-
-          <h2 className="
-          text-sm
-          text-gray-300
-          mb-5">
-
-            LOG SERVICE RECORD
-
-          </h2>
-
-
-
-          <div className="space-y-4">
-
+          <form onSubmit={handleSave} className="space-y-4 bg-[#071022] p-6 rounded-lg border border-gray-800">
+            {error && <div className="text-sm text-rose-400">{error}</div>}
 
             <input
-            placeholder="Vehicle"
-            className="
-            w-full
-            bg-transparent
-            border
-            border-gray-700
-            rounded-md
-            px-4
-            py-2"
+              name="vehicle"
+              value={form.vehicle}
+              onChange={handleChange}
+              placeholder="Vehicle (e.g. VAN-05)"
+              className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
             />
-
-
 
             <input
-            placeholder="Service Type"
-            className="
-            w-full
-            bg-transparent
-            border
-            border-gray-700
-            rounded-md
-            px-4
-            py-2"
+              name="service"
+              value={form.service}
+              onChange={handleChange}
+              placeholder="Service Type (e.g. Oil Change)"
+              className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
             />
-
-
 
             <input
-            placeholder="Cost"
-            type="number"
-            className="
-            w-full
-            bg-transparent
-            border
-            border-gray-700
-            rounded-md
-            px-4
-            py-2"
+              name="cost"
+              value={form.cost}
+              onChange={handleChange}
+              placeholder="Cost (₹)"
+              type="number"
+              min="0"
+              className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
             />
-
-
 
             <input
-            type="date"
-            className="
-            w-full
-            bg-transparent
-            border
-            border-gray-700
-            rounded-md
-            px-4
-            py-2"
+              name="date"
+              value={form.date}
+              onChange={handleChange}
+              type="date"
+              className="w-full bg-transparent border border-gray-700 rounded-md px-4 py-2 text-gray-100"
             />
-
-
 
             <select
-            className="
-            w-full
-            bg-[#111]
-            border
-            border-gray-700
-            rounded-md
-            px-4
-            py-2">
-
-              <option>
-                Active
-              </option>
-
-              <option>
-                Completed
-              </option>
-
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="w-full bg-[#071022] border border-gray-700 rounded-md px-4 py-2 text-gray-100"
+            >
+              <option value="In Shop">In Shop</option>
+              <option value="Completed">Completed</option>
+              <option value="Active">Active</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
 
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:from-yellow-400 hover:to-yellow-300"
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
 
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-4 py-2 bg-transparent border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800"
+              >
+                Clear
+              </button>
+            </div>
 
-            <button
-            className="
-            w-full
-            bg-yellow-600
-            hover:bg-yellow-500
-            rounded-md
-            py-2">
-
-              Save
-
-            </button>
-
-
-          </div>
-
-
-
-          {/* Rules */}
-
-          <div className="
-          mt-8
-          text-sm">
-
-
-            <p className="text-green-400">
-              Available
-              <span className="text-gray-500 mx-10">
-                ─────────→
-              </span>
-              <span className="text-yellow-500">
-                In Shop
-              </span>
-            </p>
-
-
-
-            <p className="text-yellow-500 mt-4">
-              In Shop
-              <span className="text-gray-500 mx-10">
-                ─────────→
-              </span>
-              <span className="text-green-400">
-                Available
-              </span>
-            </p>
-
-
-            <p className="
-            mt-5
-            text-orange-400">
-
-              Note: In Shop vehicles are removed from dispatch pool.
-
-            </p>
-
-
-          </div>
-
-
+            <div className="mt-4 text-sm text-gray-400">
+              <p className="text-green-400 inline">Available</p>
+              <span className="text-gray-500 mx-4">─────────→</span>
+              <span className="text-yellow-400">In Shop</span>
+              <p className="mt-3 text-orange-400">Note: In Shop vehicles are removed from dispatch pool.</p>
+            </div>
+          </form>
         </div>
 
-
-
-
-
-        {/* Service Log Table */}
-
-
+        {/* Service Log */}
         <div>
+          <h2 className="text-sm mb-5 text-gray-300">SERVICE LOG</h2>
 
-
-          <h2 className="
-          text-sm
-          mb-5
-          text-gray-300">
-
-            SERVICE LOG
-
-          </h2>
-
-
-
-          <table className="
-          w-full
-          text-sm">
-
-
-            <thead
-            className="
-            text-gray-400
-            border-b
-            border-gray-800">
-
-              <tr>
-
-                <th className="text-left py-3">
-                  VEHICLE
-                </th>
-
-                <th>
-                  SERVICE
-                </th>
-
-                <th>
-                  COST
-                </th>
-
-                <th>
-                  STATUS
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-
-            <tbody>
-
-
-            {
-              records.map((item,index)=>(
-
-                <tr
-                key={index}
-                className="
-                border-b
-                border-gray-800">
-
-
-                  <td className="py-3">
-                    {item.vehicle}
-                  </td>
-
-
-                  <td>
-                    {item.service}
-                  </td>
-
-
-                  <td>
-                    ₹{item.cost}
-                  </td>
-
-
-
-                  <td>
-
-                    <span
-                    className={`
-                    px-5
-                    py-1
-                    rounded-md
-                    text-black
-                    ${statusColor[item.status]}
-                    `}>
-
-                      {item.status}
-
-                    </span>
-
-                  </td>
-
-
+          <div className="bg-[#071022] rounded-lg border border-gray-800 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="text-gray-300 bg-[#071022] border-b border-gray-800">
+                <tr>
+                  <th className="text-left py-3 px-4">VEHICLE</th>
+                  <th className="py-3">SERVICE</th>
+                  <th className="py-3">COST</th>
+                  <th className="py-3">DATE</th>
+                  <th className="py-3">STATUS</th>
                 </tr>
+              </thead>
 
-              ))
-            }
+              <tbody>
+                {records.map((item, idx) => (
+                  <tr key={idx} className="border-b border-gray-800 hover:bg-[#0f1724]">
+                    <td className="py-3 px-4 text-gray-100 font-medium">{item.vehicle}</td>
+                    <td className="py-3 text-gray-200">{item.service}</td>
+                    <td className="py-3 text-gray-200">₹{Number(item.cost).toLocaleString()}</td>
+                    <td className="py-3 text-gray-200">{item.date}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-block px-4 py-1 rounded-md text-xs font-semibold ${statusColor[item.status] || "bg-gray-300 text-gray-900"}`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
 
-
-            </tbody>
-
-
-          </table>
-
-
+                {records.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-6 text-center text-gray-400">No records</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-
-
       </div>
-
-
     </div>
-
   );
-};
-
-
-export default Maintenance;
+}

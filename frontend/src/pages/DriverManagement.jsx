@@ -10,10 +10,10 @@ const initialDrivers = [
 ];
 
 const statusStyle = {
-  Available: "bg-green-500",
-  "On Trip": "bg-blue-500",
-  Suspended: "bg-orange-500",
-  "Off Duty": "bg-gray-500",
+  Available: "bg-emerald-300 text-emerald-900",
+  "On Trip": "bg-sky-300 text-sky-900",
+  Suspended: "bg-amber-300 text-amber-900",
+  "Off Duty": "bg-gray-300 text-gray-900",
 };
 
 export default function DriverManagement() {
@@ -37,9 +37,7 @@ export default function DriverManagement() {
     });
   }, [drivers, query, statusFilter]);
 
-  // Add driver handler (receives a driver object from AddDriver modal)
   const handleAddDriver = (newDriver) => {
-    // Basic normalization/fallbacks
     const driver = {
       name: newDriver.name || "Unnamed",
       license: newDriver.license || "N/A",
@@ -54,56 +52,75 @@ export default function DriverManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800 text-white p-8">
+    <div className="min-h-screen bg-[#0b1220] text-white p-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-semibold">Driver Management</h1>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Driver Management</h1>
+          <p className="text-sm text-gray-300 mt-1">Manage drivers, licenses, and statuses</p>
+        </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-yellow-600 px-5 py-2 rounded-lg text-sm hover:bg-yellow-500"
-        >
-          + Add Driver
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              setQuery("");
+              setStatusFilter("All");
+            }}
+            className="hidden md:inline-block px-4 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-700"
+          >
+            Reset Filters
+          </button>
+
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-400 px-5 py-2 rounded-lg text-sm font-medium text-black shadow-sm hover:from-yellow-400 hover:to-yellow-300"
+          >
+            + Add Driver
+          </button>
+        </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-col md:flex-row gap-5 mb-6 items-start md:items-center">
-        <input
-          type="text"
-          placeholder="Search driver..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="bg-transparent border border-gray-700 rounded-md px-4 py-2 w-72 outline-none text-gray-100 placeholder-gray-400"
-        />
+      <div className="flex flex-col md:flex-row gap-4 mb-6 items-start md:items-center">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <input
+            type="text"
+            placeholder="Search driver, license, contact..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="flex-1 md:w-72 bg-[#071022] border border-gray-700 rounded-md px-4 py-2 outline-none text-gray-100 placeholder-gray-500"
+          />
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-[#0b0b0b] border border-gray-700 rounded-md px-4 py-2 text-gray-100"
-        >
-          {statusOptions.map((s) => (
-            <option key={s} value={s} className="bg-gray-800 text-gray-100">
-              {s}
-            </option>
-          ))}
-        </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-[#071022] border border-gray-700 rounded-md px-4 py-2 text-gray-100"
+          >
+            {statusOptions.map((s) => (
+              <option key={s} value={s} className="bg-[#071022] text-gray-100">
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <button
-          onClick={() => {
-            setQuery("");
-            setStatusFilter("All");
-          }}
-          className="ml-auto md:ml-0 px-4 py-2 bg-gray-900 border border-gray-700 rounded text-gray-200 hover:bg-gray-700"
-        >
-          Reset
-        </button>
+        <div className="ml-auto flex gap-3">
+          <button
+            onClick={() => {
+              setQuery("");
+              setStatusFilter("All");
+            }}
+            className="px-4 py-2 bg-transparent border border-gray-700 rounded text-gray-300 hover:bg-gray-800"
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="border border-gray-900 rounded-lg overflow-hidden">
+      <div className="border border-gray-800 rounded-lg overflow-hidden shadow-sm">
         <table className="w-full text-sm">
-          <thead className="text-gray-400 border-b border-gray-800">
+          <thead className="text-gray-300 bg-[#071022] border-b border-gray-800">
             <tr>
               <th className="text-left p-4">DRIVER</th>
               <th className="text-left">LICENSE NO</th>
@@ -118,22 +135,30 @@ export default function DriverManagement() {
 
           <tbody>
             {filteredDrivers.map((driver, index) => (
-              <tr key={index} className="border-b border-gray-800 hover:bg-[#151515]">
-                <td className="p-4 text-gray-100">{driver.name}</td>
+              <tr key={index} className="border-b border-gray-800 hover:bg-[#0f1724]">
+                <td className="p-4">
+                  <div className="text-gray-100 font-medium">{driver.name}</div>
+                  <div className="text-xs text-gray-400">{driver.category}</div>
+                </td>
+
                 <td className="text-gray-200">{driver.license}</td>
                 <td className="text-gray-200">{driver.category}</td>
+
                 <td className={driver.expiry?.toString().includes("EXPIRED") ? "text-rose-400" : "text-gray-200"}>
                   {driver.expiry}
                 </td>
+
                 <td className="text-gray-200">{driver.contact}</td>
                 <td className="text-gray-200">{driver.score}</td>
+
                 <td>
                   <span
-                    className={`inline-block px-4 py-1 rounded-md text-black text-xs font-medium ${statusStyle[driver.status] || "bg-gray-300"}`}
+                    className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${statusStyle[driver.status] || "bg-gray-300 text-gray-900"}`}
                   >
                     {driver.status}
                   </span>
                 </td>
+
                 <td>
                   <button className="text-cyan-400 hover:underline">View</button>
                 </td>
@@ -152,11 +177,11 @@ export default function DriverManagement() {
       </div>
 
       {/* Rules */}
-      <div className="mt-8 text-sm text-amber-400">
+      <div className="mt-6 text-sm text-amber-400">
         Rule: Expired license or Suspended driver cannot be assigned to trips.
       </div>
 
-      {/* AddDriver modal - pass handler to add new driver */}
+      {/* AddDriver modal */}
       <AddDriver open={showModal} setOpen={setShowModal} onAdd={handleAddDriver} />
     </div>
   );
