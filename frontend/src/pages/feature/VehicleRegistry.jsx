@@ -81,7 +81,7 @@ function VehicleRegistry() {
   }
 
   return (
-    <div className="vehicle-registry">
+    <div className="page-layout vehicle-registry">
       <div className="sidebar">
         <div className="sidebar-header">
           <h2>Fleet Management</h2>

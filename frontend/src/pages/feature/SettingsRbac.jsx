@@ -50,7 +50,7 @@ function SettingsRbac() {
   }
 
   return (
-    <div className="settings-rbac">
+    <div className="page-layout settings-rbac">
       <div className="sidebar">
         <div className="sidebar-header">
           <h2>Fleet Management</h2>
