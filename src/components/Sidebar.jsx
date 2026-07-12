@@ -6,7 +6,7 @@ const Sidebar = () => {
   return (
     <>
       <button
-        className="m-5 text-3xl"
+        className="m-5 text-3xl text-white"
         onClick={() => setOpen(true)}
       >
         ☰
@@ -25,28 +25,37 @@ const Sidebar = () => {
         </button>
 
         <h2 className="text-2xl font-bold mt-10 mb-8">
-          Menu
+          TransitOps
         </h2>
 
         <ul className="space-y-5">
           <li className="hover:text-cyan-400 cursor-pointer">
-            Home
+            Dashboard
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
-            Profile
+            Fleet
           </li>
 
           <li className="hover:text-cyan-400 cursor-pointer">
-            Projects
+            Drivers
           </li>
 
+          <li className="hover:text-cyan-400 cursor-pointer">
+            Trips
+          </li>
+
+          <li className="hover:text-cyan-400 cursor-pointer">
+            Maintainance
+          </li>
+          <li className="hover:text-cyan-400 cursor-pointer">
+            Fuel & Expenses
+          </li>
+          <li className="hover:text-cyan-400 cursor-pointer">
+            Analytics
+          </li>
           <li className="hover:text-cyan-400 cursor-pointer">
             Settings
-          </li>
-
-          <li className="hover:text-cyan-400 cursor-pointer">
-            Logout
           </li>
         </ul>
       </div>
