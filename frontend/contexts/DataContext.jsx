@@ -42,8 +42,6 @@ return (
       value={{
         user,
         setUser,
-        data,
-        category,
       }}
     >
       {children}

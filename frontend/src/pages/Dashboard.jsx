@@ -201,7 +201,7 @@ export default function Dashboard({ apiEnabled = false, baseUrl = "" }) {
   // reset page when filters/search change
   useEffect(() => setCurrentPage(1), [vehicleTypeFilter, vehicleStatusFilter, regionFilter, searchTerm, sortConfig]);
 
-return (
+  return (
   <div className="p-6 bg-gray-900 min-h-screen text-gray-200">
     {/* Loading / Error */}
     {loading && (
@@ -393,7 +393,6 @@ return (
         ))}
       </div>
     </div>
-</div>
+  </div>
   );
 }
-
