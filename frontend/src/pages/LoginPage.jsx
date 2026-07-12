@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { DataContext } from "../context/DataContext"; // Import the context
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -9,8 +9,6 @@ export default function Login() {
     role: "",
     remember: false,
   });
-
- const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,17 +19,11 @@ export default function Login() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // preventDefault
     console.log("Form submitted:", formData);
-
-    if (!formData.remember) {
-      setFormData({ email: "", password: "", role: "", remember: false });
-    }
-
-    // ✅ Redirect after login
-    navigate("/dashboard");
+    if(!formData.remember){
+    setFormData({email:"",password:"",role:"",remember:false})}
   };
-
 
   return (
     <div className="flex h-screen">
