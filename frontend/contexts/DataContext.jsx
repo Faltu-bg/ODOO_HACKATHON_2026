@@ -4,25 +4,30 @@ import axios from "axios"
 
 const DataProvider = ({children}) => {
     const [user, setUser] = useState([])
-    const [driver, setDriver] = useState(second)
+    const [driver, setDriver] = useState([])
     const fetchData = async () => {
-    try {
-      const [productData, categoryData] = await Promise.all([
-        axios.get("http://localhost:3000/api/users"),
-        axios.get("http://localhost:3000/api/drivers"),
-      ]);
+  try {
+    const token = localStorage.getItem("token");
 
-      setData(productData.data);
-      setCategory(categoryData.data);
+    const [UserData, DriverData] = await Promise.all([
+      axios.get("http://localhost:3000/api/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      axios.get("http://localhost:3000/api/drivers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    ]);
 
-      console.log(productData.data);
-      console.log(categoryData.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      console.log("done");
-    }
-  };
+    setUser(UserData.data);
+    setDriver(DriverData.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   useEffect(() => {
     fetchData();
@@ -33,8 +38,6 @@ return (
       value={{
         user,
         setUser,
-        data,
-        category,
       }}
     >
       {children}

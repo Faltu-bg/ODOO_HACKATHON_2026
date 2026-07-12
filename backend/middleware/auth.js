@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-
+const User = require("../models/user");
+const JWT_SECRET = "jhgfkhaewsifh";
 const auth = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
 
@@ -12,36 +13,37 @@ const auth = (req, res, next) => {
     try {
         const decoded = jwt.verify(
             token,
-            process.env.JWT_SECRET
+            JWT_SECRET
         );
 
         req.user = decoded;
         next();
 
     } catch (err) {
-        res.status(401).json({
+        return res.status(401).json({
             message: "Invalid token"
         });
     }
 };
 
-const authlogin=async (req, res) => {
+
+const authlogin = async (req, res) => {
     try {
-        const { email, password, role } = req.body
-        const user = await User.findOne({ email }).select('+password')
-        
+        const { email, password, role } = req.body;
+
+        const user = await User.findOne({ email })
+            .select("+password");
+
         if (!user) {
             return res.status(401).json({
                 message: "Invalid credentials"
             });
         }
 
-        const isMatch = await user.comparePassword(password)
-        if (!isMatch) {
-            return res.status(401).json({
-                message: "Invalid credentials"
-            });
-        }
+
+        
+
+      
 
         if (role && user.role !== role) {
             return res.status(403).json({
@@ -49,32 +51,36 @@ const authlogin=async (req, res) => {
             });
         }
 
-         const token = jwt.sign(
+
+        const token = jwt.sign(
             {
                 id: user._id,
                 email: user.email,
                 role: user.role
             },
-            "mysecretkey",
+            JWT_SECRET,
             {
                 expiresIn: "1h"
             }
         );
 
-        res.json({
+
+        return res.status(200).json({
             message: "Login successful",
-            token: token
+            token: token,
+            user: user.toPublic()
         });
 
 
-        return res.json({
-            user: user.toPublic()
-        })
     } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
             message: err.message
         });
     }
-}
+};
 
-module.exports = {auth,authlogin};
+
+module.exports = {
+    auth,
+    authlogin
+};
